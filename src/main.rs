@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use taylor_series::exp;
 use clap::Parser;
 
@@ -9,7 +10,16 @@ struct Args {
     #[clap(allow_hyphen_values = true)]
     x: f64,
     /// stop execution when difference between 2 step become lower then delta
+    #[clap(validator = validate_delta)]
     delta: f64,
+}
+
+fn validate_delta(delta: &str) -> Result<(), String> {
+    match delta.parse::<f64>().unwrap().total_cmp(&0.0) {
+        Ordering::Greater => {Ok(())}
+        _ => Err(String::from("delta should be positive"))
+    }
+
 }
 
 fn main() {
